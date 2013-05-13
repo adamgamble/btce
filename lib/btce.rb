@@ -17,26 +17,22 @@ module BTCE
       @api_secret = options.fetch(:api_secret) { raise MissingAPISecretError }
     end
 
-    def get_https(url, params = nil, sign = nil)
+    def get_https(url, params = {})
+      params.merge!({:nonce => nonce})
       uri = URI.parse url
       http = Net::HTTP.new uri.host, uri.port
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      if params.nil?
-        request = Net::HTTP::Get.new uri.request_uri
-      else
-        # If sending params, then we want a post request for authentication.
-        request = Net::HTTP::Post.new uri.request_uri
-        request.add_field "Key", API::KEY['key']
-        request.add_field "Sign", sign
-        request.set_form_data params
-      end
+      request = Net::HTTP::Post.new uri.request_uri
+      request.add_field "Sign", sign_params(params)
+      request.add_field "Key", @api_key
+      request.set_form_data params
       response = http.request request
       response.body
     end
 
-    def get_json(url, params = nil, sign = nil)
-      result = get_https(url, params, sign)
+    def get_json(url, params = {})
+      result = get_https(url, params)
       JSON.load result
     end
 
@@ -45,8 +41,15 @@ module BTCE
     end
 
     private
-    def sign(data)
-      OpenSSL::HMAC.hexdigest("sha512", @api_secret, data)
+    def sign_params(params)
+      data = "?"
+      params.each_pair do |key, value|
+        data += "#{key}=#{value}"
+      end
+      puts "Signing #{data}"
+      signed = OpenSSL::HMAC.hexdigest("sha512", @api_secret, data)
+      puts signed
+      signed
     end
 
     def nonce
