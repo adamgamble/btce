@@ -36,20 +36,15 @@ module BTCE
       JSON.load result
     end
 
-    def getinfo
-      get_json("https://btc-e.com/tapi/getinfo")
+    def get_info
+      get_json("https://btc-e.com/tapi/getinfo", :method => "getInfo")
     end
 
     private
     def sign_params(params)
-      data = "?"
-      params.each_pair do |key, value|
-        data += "#{key}=#{value}"
-      end
-      puts "Signing #{data}"
-      signed = OpenSSL::HMAC.hexdigest("sha512", @api_secret, data)
-      puts signed
-      signed
+      params = params.collect {|k,v| "#{k}=#{v}"}.join('&')
+      hmac = OpenSSL::HMAC.new(@api_secret, OpenSSL::Digest::SHA512.new)
+      hmac.update params
     end
 
     def nonce
