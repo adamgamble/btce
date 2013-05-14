@@ -12,6 +12,7 @@ module BTCE
 
   class API
     attr_accessor :api_key, :api_secret
+
     def initialize options = {}
       @api_key    = options.fetch(:api_key)    { raise MissingAPIKeyError }
       @api_secret = options.fetch(:api_secret) { raise MissingAPISecretError }
@@ -36,8 +37,12 @@ module BTCE
       JSON.load result
     end
 
-    def get_info
+    def balance
       get_json("https://btc-e.com/tapi/getinfo", :method => "getInfo")
+    end
+
+    def transaction_history
+      get_json("https://btc-e.com/tapi", :method => "TransHistory")
     end
 
     private
