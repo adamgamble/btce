@@ -6,6 +6,7 @@ require 'openssl'
 require 'uri'
 
 module BTCE
+  BTCE_API_URL = "https://btc-e.com/tapi"
   class MissingAPIKeyError < Exception;end
   class MissingAPISecretError < Exception;end
   class ServerResponseError < Exception;end
@@ -18,9 +19,9 @@ module BTCE
       @api_secret = options.fetch(:api_secret) { raise MissingAPISecretError }
     end
 
-    def get_https(url, params = {})
+    def get_https(params = {})
       params.merge!({:nonce => nonce})
-      uri = URI.parse url
+      uri = URI.parse BTCE_API_URL
       http = Net::HTTP.new uri.host, uri.port
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -32,17 +33,29 @@ module BTCE
       response.body
     end
 
-    def get_json(url, params = {})
-      result = get_https(url, params)
+    def get_json(params = {})
+      result = get_https(params)
       JSON.load result
     end
 
     def balance
-      get_json("https://btc-e.com/tapi/getinfo", :method => "getInfo")
+      get_json :method => "getInfo"
     end
 
     def transaction_history
-      get_json("https://btc-e.com/tapi", :method => "TransHistory")
+      get_json :method => "TransHistory"
+    end
+
+    def order_list
+      get_json :method => "OrderList"
+    end
+
+    def trade pair = "btc_usd", type, rate, amount
+      get_json method: "Trade", pair: pair, type: type, rate: rate, amount: amount
+    end
+
+    def cancel_order order_id
+      get_json method: "CancelOrder", order_id: order_id
     end
 
     private
