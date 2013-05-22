@@ -10,4 +10,19 @@ describe BTCE::API do
       expect { BTCE::API.new :api_key => "blah" }.to raise_error(BTCE::MissingAPISecretError)
     end
   end
+
+  describe "#nonce" do
+    before(:each) do
+      @api = BTCE::API.new :api_secret => "blah", :api_key => "blag"
+    end
+
+    it "should return 1 for the first nonce" do
+      @api.send(:nonce).should == "1"
+    end
+
+    it "should return 2 for the second nonce" do
+      @api.send(:nonce)
+      @api.send(:nonce).should == "2"
+    end
+  end
 end
