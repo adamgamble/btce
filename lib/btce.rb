@@ -46,7 +46,7 @@ module BTCE
       get_json :method => "TransHistory"
     end
 
-    def order_list
+    def orders
       get_json :method => "OrderList"
     end
 
