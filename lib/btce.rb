@@ -41,8 +41,7 @@ module BTCE
       begin
         handle_nonce_error(result)
       rescue NonceError => error
-        result = get_https(params)
-        result = JSON.load result
+        result = get_json(params)
       end
       result
     end
