@@ -17,6 +17,7 @@ module BTCE
     def initialize options = {}
       @api_key    = options.fetch(:api_key)    { raise MissingAPIKeyError }
       @api_secret = options.fetch(:api_secret) { raise MissingAPISecretError }
+      @nonce_seed = 1
     end
 
     def get_https(params = {})
@@ -66,7 +67,9 @@ module BTCE
     end
 
     def nonce
-      Time.now.to_i
+      nonce = Time.now.to_i.to_s + @nonce_seed
+      @nonce_seed += 1
+      nonce
     end
   end
 end
