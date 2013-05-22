@@ -69,6 +69,7 @@ module BTCE
     def nonce
       nonce_string = Time.now.to_i.to_s + @nonce_seed.to_s
       @nonce_seed += 1
+      puts "Nonce: nonce_string
       nonce_string
     end
   end
