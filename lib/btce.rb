@@ -10,14 +10,15 @@ module BTCE
   class MissingAPIKeyError < Exception;end
   class MissingAPISecretError < Exception;end
   class ServerResponseError < Exception;end
+  class NonceError < ServerResponseError;end
 
   class API
-    attr_accessor :api_key, :api_secret
+    attr_accessor :api_key, :api_secret, :nonce_seed
 
     def initialize options = {}
       @api_key    = options.fetch(:api_key)    { raise MissingAPIKeyError }
       @api_secret = options.fetch(:api_secret) { raise MissingAPISecretError }
-      @nonce_seed = 1
+      @nonce_seed = 0
     end
 
     def get_https(params = {})
@@ -36,7 +37,14 @@ module BTCE
 
     def get_json(params = {})
       result = get_https(params)
-      JSON.load result
+      result = JSON.load result
+      begin
+        handle_nonce_error(result)
+      rescue NonceError => error
+        result = get_https(params)
+        result = JSON.load result
+      end
+      result
     end
 
     def balance
@@ -66,11 +74,15 @@ module BTCE
       hmac.update params
     end
 
+    def handle_nonce_error(result)
+      if result["success"] == 0 && old_nonce_matches = result["error"].match(/\s*; (\d*) \d*/)
+        self.nonce_seed = old_nonce_matches[1].to_i + 1
+        raise NonceError
+      end
+    end
+
     def nonce
-      nonce_string = Time.now.to_i.to_s + @nonce_seed.to_s
-      @nonce_seed += 1
-      puts "Nonce: #{nonce_string} & Nonce Seed: #{@nonce_seed}"
-      nonce_string
+      @nonce_seed = @nonce_seed + 1
     end
   end
 end

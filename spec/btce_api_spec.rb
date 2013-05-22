@@ -24,5 +24,11 @@ describe BTCE::API do
       @api.send(:nonce)
       @api.send(:nonce).should == "2"
     end
+
+    it "should return 3 for the third" do
+      @api.send(:nonce)
+      @api.send(:nonce)
+      @api.send(:nonce).should == "3"
+    end
   end
 end
