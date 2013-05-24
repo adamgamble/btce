@@ -59,7 +59,10 @@ module BTCE
     end
 
     def trade pair = "btc_usd", type, rate, amount
-      get_json method: "Trade", pair: pair, type: type, rate: rate, amount: amount
+      response = get_json method: "Trade", pair: pair, type: type, rate: rate, amount: amount
+      puts "***********************"
+      puts response
+      puts "***********************"
     end
 
     def cancel_order order_id
