@@ -11,6 +11,7 @@ module BTCE
   class MissingAPISecretError < Exception;end
   class ServerResponseError < Exception;end
   class NonceError < ServerResponseError;end
+  class TradeNotCompletedError < Exception;end
 
   class API
     attr_accessor :api_key, :api_secret, :nonce_seed
@@ -60,9 +61,10 @@ module BTCE
 
     def trade pair = "btc_usd", type, rate, amount
       response = get_json method: "Trade", pair: pair, type: type, rate: rate, amount: amount
-      puts "***********************"
-      puts response
-      puts "***********************"
+      if response["success"] == 0
+        raise TradeNotCompletedError, response["error"]
+      end
+      response
     end
 
     def cancel_order order_id
