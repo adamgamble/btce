@@ -55,8 +55,8 @@ module BTCE
       get_json :method => "TransHistory"
     end
 
-    def orders
-      get_json :method => "OrderList"
+    def orders(active = 1)
+      get_json :method => "OrderList", :active = active
     end
 
     def trade pair = "btc_usd", type, rate, amount
