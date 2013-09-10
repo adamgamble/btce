@@ -1,7 +1,14 @@
+PATH
+  remote: .
+  specs:
+    btce (0.0.1)
+      net-http-persistent
+
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.2.4)
+    net-http-persistent (2.9)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -16,5 +23,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  btce!
   rspec
   yard
