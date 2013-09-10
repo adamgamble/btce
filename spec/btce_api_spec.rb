@@ -17,18 +17,18 @@ describe BTCE::API do
     end
 
     it "should return 1 for the first nonce" do
-      @api.send(:nonce).should == "1"
+      @api.send(:nonce).should == 1
     end
 
     it "should return 2 for the second nonce" do
       @api.send(:nonce)
-      @api.send(:nonce).should == "2"
+      @api.send(:nonce).should == 2
     end
 
     it "should return 3 for the third" do
       @api.send(:nonce)
       @api.send(:nonce)
-      @api.send(:nonce).should == "3"
+      @api.send(:nonce).should == 3
     end
   end
 end

@@ -8,4 +8,5 @@ Gem::Specification.new do |s|
   s.email = 'adamgamble@gmail.com'
   s.files = ['lib/btce.rb']
   s.homepage = 'https://github.com/adamgamble/ruby-btce'
+  s.add_dependency 'net-http-persistent'
 end
