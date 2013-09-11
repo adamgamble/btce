@@ -4,6 +4,7 @@ require 'net/http'
 require 'net/https'
 require 'openssl'
 require 'uri'
+require 'net/http/persistent'
 
 module BTCE
   BTCE_API_URL = "https://btc-e.com/tapi"
@@ -28,11 +29,12 @@ module BTCE
       http = Net::HTTP.new uri.host, uri.port
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      persist = Net::HTTP::Persistent.new 'btc-e'
       request = Net::HTTP::Post.new uri.request_uri
       request.add_field "Sign", sign_params(params)
       request.add_field "Key", @api_key
       request.set_form_data params
-      response = http.request request
+      response = persist.request uri, request
       response.body
     end
 

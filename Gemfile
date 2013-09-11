@@ -4,3 +4,5 @@ group :development do
   gem 'rspec'
   gem 'yard'
 end
+
+gemspec
