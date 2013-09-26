@@ -81,7 +81,8 @@ module BTCE
     end
 
     def handle_nonce_error(result)
-      if result["success"] == 0 && old_nonce_matches = result["error"].match(/\s*; (\d*) \d*/)
+      #  invalid nonce parameter; on key:6258, you sent:1
+      if result["success"] == 0 && old_nonce_matches = result["error"].match(/\s*; on key:(\d+), you sent:\d+/)
         self.nonce_seed = old_nonce_matches[1].to_i + 1
         raise NonceError
       end
